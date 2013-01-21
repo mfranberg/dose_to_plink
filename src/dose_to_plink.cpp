@@ -14,6 +14,7 @@
 
 #include <gzstream/gzstream.h>
 #include <fixed/fixed.h>
+#include <optparse/OptionParser.h>
 
 #include <dose_writer.hpp>
 #include <fam_util.hpp>
@@ -21,7 +22,7 @@
 #include <locus.hpp>
 #include <minimacio.hpp>
 
-namespace po = boost::program_options;
+using namespace optparse;
 
 /**
  * Parses the options for the program.
@@ -33,41 +34,43 @@ namespace po = boost::program_options;
  *
  * @return Parsed arguments.
  */
-po::variables_map
+Values
 parse_options(int argc, char *argv[])
 {
-    po::options_description description( "Usage: dose_to_plink [options] --type type --dose-file dose_file --info-file info_file --output_file output_file\nTransposes a minimac .dose or .prob file so that it can be used with plink." );
-    description.add_options( )
-            ( "help", "Produce a help message." )
-            ( "type", po::value< std::string >( ), "Type of dose file: dose or prob." )
-            ( "dose-file", po::value< std::string >( ), "Location of dose file." )
-            ( "info-file", po::value< std::string >( ), "Location of info file." )
-            ( "output-file", po::value< std::string >( ), "Output file (gzipped)." )
-            ( "alias-file", po::value< std::string >( ), "Optional: Change names of the FID and IID. Format is lines consisting of old_fid old_iid new_fid new_iid." )
-            ( "order-file", po::value< std::string >( ), "Optional: The FID and IID will be ordered according to this. Format is lines consisting of a single iid." );
+    const std::string usage = "";
+    OptionParser parser = OptionParser( ).usage( "Usage: dose_to_plink [options] --t type --d dose_file -i info_file -o output_file\nTransposes a minimac .dose or .prob file so that it can be used with plink." );
+    char const* const types[] = { "dose", "prob" };
+    parser.add_option( "-t" ).metavar( "type" ).help( "Type of dose file 'prob' or 'dose'." );
+    parser.add_option( "-d" ).metavar( "dose_file" ).help( "Location of dose file." );
+    parser.add_option( "-i" ).metavar( "info_file" ).help( "Location of info file." );
+    parser.add_option( "-o" ).metavar( "output_file" ).help( "Outoput file (gzipped)." );
 
-    po::variables_map args;
-    po::store( po::parse_command_line( argc, argv, description ), args );
-    po::notify( args );
+    OptionGroup group = OptionGroup( parser, "Optional parameters" );
+    group.add_option( "--alias-file" ).help( "Optional: Change names of the FID and IID. Format is lines consisting of old_fid old_iid new_fid new_iid." );
+    group.add_option( "--order-file" ).help( "Optional: The FID and IID will be ordered according to this. Format is lines consisting of a single iid." );
+    parser.add_option_group( group );
+
+    Values options = parser.parse_args( argc, argv );
+    std::vector<std::string> args = parser.args( );
    
-    if( args.count( "help" ) > 0 || args.count( "type" ) + args.count( "dose-file" ) + args.count( "info-file" ) + args.count( "output-file" ) != 4 )
+    if( args.size( ) > 0 || options.is_set( "t" ) + options.is_set( "d" ) + options.is_set( "i" ) + options.is_set( "o" ) != 4 )
     {
-        std::cout << description << std::endl;
+        std::cout << parser.format_help( ) << std::endl;
         exit( 1 );
     }
 
-    return args;
+    return options;
 }
 
 int
 main(int argc, char *argv[])
 {
-    po::variables_map args = parse_options( argc, argv );
+    Values options = parse_options( argc, argv );
 
-    std::string type = args[ "type" ].as< std::string >( );
-    std::string dose_path = args[ "dose-file" ].as< std::string >( );
-    std::string info_path = args[ "info-file" ].as< std::string >( );
-    std::string output_path = args[ "output-file" ].as< std::string >( );
+    std::string type = options[ "t" ];
+    std::string dose_path = options[ "d" ];
+    std::string info_path = options[ "i" ];
+    std::string output_path = options[ "o" ];
     
     if( dose_path.find( type ) == std::string::npos )
     {
@@ -84,9 +87,9 @@ main(int argc, char *argv[])
     std::vector<Individual> individuals = read_individuals( dose_path );
     std::vector<Locus> loci = read_loci( info_path );
 
-    if( args.count( "alias-file" ) > 0 )
+    if( options.is_set( "alias_file" ) )
     {
-        bool success = update_individuals( &individuals, args[ "alias-file" ].as< std::string >( ) );
+        bool success = update_individuals( &individuals, options[ "alias_file" ] );
         if( !success )
         {
             printf( "dose_to_plink: error: Error in alias file, alias missing." );
@@ -94,9 +97,9 @@ main(int argc, char *argv[])
         }
 
     }
-    if( args.count( "order-file" ) > 0 )
+    if( options.is_set( "order_file" ) )
     {
-        bool success = order_individuals( &individuals, args[ "order-file" ].as< std::string >( ) );
+        bool success = order_individuals( &individuals, options[ "order_file" ] );
         if( !success )
         {
             printf( "dose_to_plink: error: Error in order file, individual missing." );
