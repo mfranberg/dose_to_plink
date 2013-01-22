@@ -1,3 +1,0 @@
-[submodule "libs/optparse"]
-	path = libs/optparse
-	url = https://github.com/weisslj/cpp-optparse.git
