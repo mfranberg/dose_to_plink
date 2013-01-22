@@ -39,4 +39,6 @@ The following pieces of software have additional or alternate copyrights,
 licenses, and/or restrictions:
 
 Directory/File              License
+libs/fixed                  X/MIT License
+libs/gzstream               GNU Lesser general public license
 libs/optparse               Modified BSD License
