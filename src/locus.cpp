@@ -1,3 +1,11 @@
+/**
+ * Copyright (c) 2013, Mattias Frånberg
+ * All rights reserved.
+ *
+ * This file is distributed under the Modified BSD License. See the COPYING file
+ * for details.
+ */
+
 #include <locus.hpp>
 
 Locus::Locus(std::string name, std::string a1, std::string a2)
