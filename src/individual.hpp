@@ -15,7 +15,7 @@
 #include <vector>
 
 /**
- * Dosages are only specifed with 4 decimals,
+ * Dosages are only specifed with 3 decimals,
  * so this will save some space compared with a float.
  */
 typedef numeric::Fixed<3,13> fixed;
