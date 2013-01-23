@@ -9,19 +9,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <algorithm>
-#include <iomanip>
-#include <iostream>
-#include <iterator>
-#include <map>
-#include <sstream>
 #include <string>
 #include <vector>
 
-#include <boost/program_options.hpp>
-
-#include <gzstream/gzstream.h>
-#include <fixed/fixed.h>
 #include <optparse/OptionParser.h>
 
 #include <dose_writer.hpp>
@@ -46,7 +36,8 @@ Values
 parse_options(int argc, char *argv[])
 {
     const std::string usage = "";
-    OptionParser parser = OptionParser( ).usage( "Usage: dose_to_plink [options] --t type --d dose_file -i info_file -o output_file\nTransposes a minimac .dose or .prob file so that it can be used with plink." );
+    OptionParser parser = OptionParser( ).usage( "Usage: dose_to_plink [options] -t type -d dose_file -i info_file -o output_file\n"
+                                                 "Transposes a minimac .dose or .prob file so that it can be used with plink." );
     char const* const types[] = { "dose", "prob" };
     parser.add_option( "-t" ).metavar( "type" ).help( "Type of dose file 'prob' or 'dose'." );
     parser.add_option( "-d" ).metavar( "dose_file" ).help( "Location of dose file." );
@@ -54,8 +45,10 @@ parse_options(int argc, char *argv[])
     parser.add_option( "-o" ).metavar( "output_file" ).help( "Outoput file (gzipped)." );
 
     OptionGroup group = OptionGroup( parser, "Optional parameters" );
-    group.add_option( "--alias-file" ).help( "Optional: Change names of the FID and IID. Format is lines consisting of old_fid old_iid new_fid new_iid." );
-    group.add_option( "--order-file" ).help( "Optional: The FID and IID will be ordered according to this. Format is lines consisting of a single iid." );
+    group.add_option( "--alias-file" )
+        .help( "Optional: Change names of the FID and IID. The file should contain lines consisting of 'old_fid old_iid new_fid new_iid'." );
+    group.add_option( "--order-file" )
+        .help( "Optional: The FID and IID will be ordered according to this. The file should contain lines consisting of a single iid." );
     parser.add_option_group( group );
 
     Values options = parser.parse_args( argc, argv );
@@ -95,6 +88,7 @@ main(int argc, char *argv[])
     std::vector<Individual> individuals = read_individuals( dose_path );
     std::vector<Locus> loci = read_loci( info_path );
 
+    /* Change names */
     if( options.is_set( "alias_file" ) )
     {
         bool success = update_individuals( &individuals, options[ "alias_file" ] );
@@ -105,6 +99,8 @@ main(int argc, char *argv[])
         }
 
     }
+
+    /* Order iids according to file */
     if( options.is_set( "order_file" ) )
     {
         bool success = order_individuals( &individuals, options[ "order_file" ] );

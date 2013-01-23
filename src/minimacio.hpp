@@ -45,6 +45,9 @@ std::vector<Locus> read_loci(std::string info_path);
  * @param loci List of loci and their associated info.
  * @param output_path Output file.
  */
-void write_plink_file_gz(const std::vector<Individual> &individuals, const std::vector<Locus> &loci, std::string output_path, std::auto_ptr<DoseWriter> writer);
+void write_plink_file_gz(const std::vector<Individual> &individuals,
+                         const std::vector<Locus> &loci,
+                         std::string output_path,
+                         std::auto_ptr<DoseWriter> writer);
 
 #endif /* End of __MINIMACIO_H__ */

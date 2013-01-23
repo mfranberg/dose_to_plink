@@ -28,7 +28,8 @@ split_line(std::string line)
 {
     std::istringstream line_stream( line );
     std::vector<std::string> splitted_line;
-    splitted_line.assign( std::istream_iterator<std::string>( line_stream ), std::istream_iterator<std::string>( ) );
+    splitted_line.assign( std::istream_iterator<std::string>( line_stream ), 
+                          std::istream_iterator<std::string>( ) );
 
     return splitted_line;
 }
