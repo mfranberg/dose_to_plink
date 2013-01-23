@@ -43,10 +43,13 @@ std::vector<Locus> read_loci(std::string info_path);
  *
  * @param individuals List of individuals and their dosage.
  * @param loci List of loci and their associated info.
+ * @param print_header Determines whether to print a header or not.
  * @param output_path Output file.
+ * @param writer Determines which typ of dose file to write.
  */
 void write_plink_file_gz(const std::vector<Individual> &individuals,
                          const std::vector<Locus> &loci,
+                         bool print_header,
                          std::string output_path,
                          std::auto_ptr<DoseWriter> writer);
 

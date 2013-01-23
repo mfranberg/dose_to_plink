@@ -119,18 +119,25 @@ read_loci(std::string info_path)
 }
 
 void
-write_plink_file_gz(const std::vector<Individual> &individuals, const std::vector<Locus> &loci, std::string output_path, std::auto_ptr<DoseWriter> writer)
+write_plink_file_gz(const std::vector<Individual> &individuals,
+                    const std::vector<Locus> &loci,
+                    bool print_header,
+                    std::string output_path,
+                    std::auto_ptr<DoseWriter> writer)
 {
     gz::ogzstream output_file( output_path.c_str( ) );
     output_file << std::fixed << std::setprecision( 3 );
 
     /* Write header. */
-    output_file << "SNP\tA1\tA2";
-    for(unsigned int i = 0; i < individuals.size( ); i++)
+    if( print_header )
     {
-        output_file << "\t" << individuals[ i ].get_fid( ) << " " << individuals[ i ].get_iid( );
+        output_file << "SNP\tA1\tA2";
+        for(unsigned int i = 0; i < individuals.size( ); i++)
+        {
+            output_file << "\t" << individuals[ i ].get_fid( ) << " " << individuals[ i ].get_iid( );
+        }
+        output_file << std::endl;
     }
-    output_file << std::endl;
 
     /* Write doses */
     for(unsigned int i = 0; i < loci.size( ); i++)

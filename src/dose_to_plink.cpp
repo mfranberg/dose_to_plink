@@ -46,9 +46,11 @@ parse_options(int argc, char *argv[])
 
     OptionGroup group = OptionGroup( parser, "Optional parameters" );
     group.add_option( "--alias-file" )
-        .help( "Optional: Change names of the FID and IID. The file should contain lines consisting of 'old_fid old_iid new_fid new_iid'." );
+        .help( "Change names of the FID and IID. The file should contain lines consisting of 'old_fid old_iid new_fid new_iid'." );
     group.add_option( "--order-file" )
-        .help( "Optional: The FID and IID will be ordered according to this. The file should contain lines consisting of a single iid." );
+        .help( "The FID and IID will be ordered according to this. The file should contain lines consisting of a single iid." );
+    group.add_option( "--no-header" ).action( "store_true" )
+        .help( "If supplied no header with IID and FID will be written. This should only be used if you have the same IID order in all chunks." );
     parser.add_option_group( group );
 
     Values options = parser.parse_args( argc, argv );
@@ -111,5 +113,6 @@ main(int argc, char *argv[])
         }
     }
 
-    write_plink_file_gz( individuals, loci, output_path, writer );
+    bool print_header = !options.is_set( "no_header" );
+    write_plink_file_gz( individuals, loci, print_header, output_path, writer );
 }
