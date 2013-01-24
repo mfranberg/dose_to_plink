@@ -11,6 +11,8 @@
 #include <sstream>
 #include <string>
 
+#include <string.h>
+
 #include <gzstream/gzstream.h>
 
 #include <minimacio.hpp>
@@ -24,12 +26,16 @@
  * @return A list of strings.
  */
 static std::vector<std::string>
-split_line(std::string line)
+split_line(const std::string &line)
 {
-    std::istringstream line_stream( line );
+    char *c_line = strdup( line.c_str( ) );
     std::vector<std::string> splitted_line;
-    splitted_line.assign( std::istream_iterator<std::string>( line_stream ), 
-                          std::istream_iterator<std::string>( ) );
+    for( char *word = strtok( c_line, "\t " ); word != NULL; word = strtok( NULL, "\t " ) )
+    {
+        splitted_line.push_back( word );
+    }
+
+    free( c_line );
 
     return splitted_line;
 }
