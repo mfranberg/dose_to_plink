@@ -42,7 +42,7 @@ public:
         std::string a_id = a.get_iid( );
         std::string b_id = b.get_iid( );
 
-        if( m_id_to_index.count( a_id ) < 0 || m_id_to_index.count( b_id ) < 0 )
+        if( m_id_to_index.count( a_id ) <= 0 || m_id_to_index.count( b_id ) <= 0 )
         {
             m_success = false;
         }
