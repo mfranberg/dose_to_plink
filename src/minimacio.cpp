@@ -89,25 +89,26 @@ create_locus(const std::vector<std::string> &splitted_line)
     return Locus( splitted_line[ 0 ], splitted_line[ 1 ], splitted_line[ 2 ] );
 }
 
-std::vector<Individual>
-read_individuals(std::string dose_path)
+void
+read_individuals(const std::string &dose_path, std::vector<Individual> *individual_list)
 {
     gz::igzstream dose_file( dose_path.c_str( ) );
-    
-    std::vector<Individual> individual_list;
+
+    // Try to avoid extra copies of the vector when it has
+    // to grow.
+    individual_list->reserve( 10000 );
+   
     std::string line;
     while( std::getline( dose_file, line ) )
     {
         std::vector<std::string> splitted_line = split_line( line );
         Individual individual = create_individual( splitted_line );
-        individual_list.push_back( individual );
+        individual_list->push_back( individual );
     }
-
-    return individual_list;
 }
 
 std::vector<Locus>
-read_loci(std::string info_path)
+read_loci(const std::string &info_path)
 {
     gz::igzstream info_file( info_path.c_str( ) );
 
@@ -128,7 +129,7 @@ void
 write_plink_file_gz(const std::vector<Individual> &individuals,
                     const std::vector<Locus> &loci,
                     bool print_header,
-                    std::string output_path,
+                    const std::string &output_path,
                     std::auto_ptr<DoseWriter> writer)
 {
     gz::ogzstream output_file( output_path.c_str( ) );

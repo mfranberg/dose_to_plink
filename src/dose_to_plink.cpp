@@ -87,7 +87,8 @@ main(int argc, char *argv[])
         exit( 1 );
     }
 
-    std::vector<Individual> individuals = read_individuals( dose_path );
+    std::vector<Individual> individuals;
+    read_individuals( dose_path, &individuals );
     std::vector<Locus> loci = read_loci( info_path );
 
     /* Change names */

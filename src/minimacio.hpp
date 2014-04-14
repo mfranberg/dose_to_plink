@@ -25,7 +25,7 @@
  *
  * @return The list of individuals.
  */
-std::vector<Individual> read_individuals(std::string dose_path);
+void read_individuals(const std::string &dose_path, std::vector<Individual> *individual_list);
 
 /**
  * Reads all loci and their alleles from a gzipped compressed
@@ -35,7 +35,7 @@ std::vector<Individual> read_individuals(std::string dose_path);
  *
  * @return The list of loci.
  */
-std::vector<Locus> read_loci(std::string info_path);
+std::vector<Locus> read_loci(const std::string &info_path);
 
 /**
  * Writes a dosage file that can be parsed by plink from
@@ -50,7 +50,7 @@ std::vector<Locus> read_loci(std::string info_path);
 void write_plink_file_gz(const std::vector<Individual> &individuals,
                          const std::vector<Locus> &loci,
                          bool print_header,
-                         std::string output_path,
+                         const std::string &output_path,
                          std::auto_ptr<DoseWriter> writer);
 
 #endif /* End of __MINIMACIO_H__ */
